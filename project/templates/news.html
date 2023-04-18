@@ -1,9 +1,7 @@
-<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
 {% extends 'flatpages/default.html' %}
 
 {% load custom_filters %}
 
-<!-- Название у нас будет products -->
 {% block title %}
 News
 {% endblock title %}
@@ -12,10 +10,10 @@ News
 {% block content %}
     <h1>All news</h1>
 
-<!--   <form action="" method="get">
+    <form action="" method="get">
        <input type="submit" value="Найти" />
    </form>
--->
+
     {% if news %}
         <table>
             <tr>
