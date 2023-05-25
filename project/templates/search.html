@@ -2,8 +2,6 @@
 
 {% load custom_filters %}
 
-{% load bootstrap %}
-
 {% load  custom_tags%}
 
 {% block title %}
@@ -13,6 +11,12 @@ News
 <!-- В контенте на странице мы выводим все товары -->
 {% block content %}
     <h1>All news</h1>
+
+    <form action="" method="get">
+        {{ filterset.form.as_p }}
+        <input type="submit" value="Найти" />
+   </form>
+
     <hr>
     {% if news %}
         <table>

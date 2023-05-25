@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.flatpages',
     'news',
-    'django_filters'
+    'django_filters',
+    'bootstrapform'
 ]
 
 SITE_ID = 1

@@ -3,11 +3,12 @@ from .models import Post
 
 
 class PostFilter(FilterSet):
-
    class Meta:
        model = Post
        fields = {
            # поиск по названию
-           'author': ['icontains'],
-           'rate_of_post': ['gt'],
+           'author': ['exact'],
+           'rate_of_post': ['gte'],
+           'header': ['contains'],
+           'date_and_time': ['date__gt']
        }
