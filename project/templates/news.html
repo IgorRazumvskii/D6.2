@@ -1,4 +1,5 @@
 {% extends 'flatpages/default.html' %}
+{% load cache %}
 
 {% load custom_filters %}
 
@@ -11,6 +12,7 @@ News
 {% endblock title %}
 
 <!-- В контенте на странице мы выводим все товары -->
+{%cache 100 content%}
 {% block content %}
     <h1>All news</h1>
     <hr>
@@ -26,6 +28,7 @@ News
                     <td>{{new.header|censor}}</td>
                     <td>{{new.text|truncatechars:20|censor}}</td>
                     <td>{{new.date_and_time|date:'d M Y'}}</td>
+                    <td>{{new.author.rate}}</td>
                 </tr>
             {% endfor %}
         </table>
@@ -51,3 +54,4 @@ News
        {% endif %}
    {% endif %}
 {% endblock content %}
+{% endcache %}

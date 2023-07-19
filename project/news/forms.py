@@ -5,6 +5,7 @@ from .models import Post
 
 class PostForm(forms.ModelForm):
     description = forms.CharField(min_length=20)
+
     class Meta:
         model = Post
         fields = ['header',
@@ -21,3 +22,8 @@ class PostForm(forms.ModelForm):
                 "description": "Описание должно отличаться от названия."
             })
         return cleaned_data
+
+
+class LetterForm(forms.Form):
+    theme = forms.CharField(label='Тема')
+    text = forms.CharField(label='Текст')
