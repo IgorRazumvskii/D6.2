@@ -11,6 +11,8 @@ from django import forms
 
 from allauth.account.forms import SignupForm
 
+from django.dispatch import receiver
+
 CHOICES = [
     ("AR", 'article'),
     ("NE", 'news'),
@@ -39,6 +41,7 @@ class Author(models.Model):
 
 class Category(models.Model):
     name_of_category = models.CharField(max_length=255, unique=True)
+    subscribers = models.ManyToManyField(User, related_name='get_subscribers', blank=True)
 
     def __str__(self):
         return self.name_of_category
@@ -97,7 +100,6 @@ class Comment(models.Model):
         self.save()
 
 
-#  Help
 class BaseRegisterForm(UserCreationForm):
     email = forms.EmailField(label="Email")
     first_name = forms.CharField(label="Имя")
@@ -128,7 +130,7 @@ def send_m(sender, instance, created, **kwargs):
         f'{instance.header} was created',
         f'{instance.author} is an author',
         'razumovskijigor6@gmail.com',
-        ['bogomolovog@mail.ru', ]
+        ['bogomolovog@email.ru', ]
         )
 
 

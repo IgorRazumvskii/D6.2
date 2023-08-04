@@ -1,4 +1,4 @@
-from .models import Post, User, BaseRegisterForm
+from .models import Post, User, BaseRegisterForm, Category
 from .filters import PostFilter
 from .forms import PostForm, LetterForm
 from news.tasks import send
@@ -6,24 +6,47 @@ from news.tasks import send
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView, TemplateView
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.mail import send_mail, EmailMessage
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.shortcuts import redirect, render
+from django.db.models.signals import post_save
+from django.core.mail import send_mail, EmailMessage, mail_managers
 
 
+# Вывод новостей
 class PostList(ListView):
     model = Post
     ordering = '-date_and_time'
     template_name = 'news.html'
     context_object_name = 'news'
-    paginate_by = 2
+    # paginate_by = 2
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
 
     def get_queryset(self):
         return Post.objects.all().select_related('author')
+
+
+# Вывод по категориям
+class CategoryList(ListView):
+    model = Post
+    ordering = '-date_and_time'
+    template_name = 'category.html'
+    context_object_name = 'categories'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = Category.objects.get(pk=self.kwargs['pk'])
+        return context
+
+    def get_queryset(self):
+        return Post.objects.filter(category=self.kwargs['pk'])
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
@@ -41,7 +64,7 @@ class BaseRegisterView(CreateView):
     success_url = 'index.html'
 
 
-class PostDetail(DetailView):  # HELP!
+class PostDetail(DetailView):
     model = Post
     template_name = 'new.html'
     context_object_name = 'new'
@@ -179,5 +202,13 @@ def upgrade_me(request):
     if not request.user.groups.filter(name='authors').exists():
         premium_group.user_set.add(user)
     return redirect('/')
+
+
+def submit(request, pk):
+    category = Category.objects.get(pk=pk)
+    user = request.user
+    category.subscribers.add(user)
+    category.save()
+    return render(request, 'submit.html')
 
 

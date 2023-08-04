@@ -8,7 +8,7 @@ def send():
         'Theme',
         'Text',
         'razumovskijigor6@gmail.com',
-        ['bogomolovog@mail.ru', ], fail_silently=False
+        ['igor.raz@list.ru', ], fail_silently=False
         )
 
 
@@ -18,9 +18,9 @@ def second_send():
         'Theme',
         'Text',
         'razumovskijigor6@gmail.com',
-        ['bogomolovog@mail.ru', ], fail_silently=False
+        ['igor.raz@list.ru', ], fail_silently=False
         )
-
+#  bogomolovog@email.ru
 
 @app.task
 def task(x, y):

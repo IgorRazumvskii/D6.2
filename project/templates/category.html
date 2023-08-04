@@ -11,31 +11,25 @@
 News
 {% endblock title %}
 
-{%cache 100 content%}
+<!-- В контенте на странице мы выводим все товары -->
+
 {% block content %}
-    {% for category in categories %}
-        <a href="{% url 'category' category.pk %}">{{category}}</a>
-    {% endfor %}
-    <h1>All news</h1>
-    <hr>
-    {% if news %}
+    <h1>Categories</h1>
+    {% if categories %}
         <table>
             <tr>
+                <td>{{category}}</td>
                 <td>Header</td>
-                <td>Text</td>
                 <td>Date and time</td>
                 <td>Rate</td>
             </tr>
-            {% for new in news %}
+            {% for pc in categories %}
                 <tr>
-                    <td><a href="{% url 'category' new.pk %}">{{new.header|censor}}</a></td>
-                    <td>{{new.text|truncatechars:20|censor}}</td>
-                    <td>{{new.date_and_time|date:'d M Y'}}</td>
-                    <td>{{new.author.rate}}</td>
-                    <td>{{new.category}}</td>
+                  <td>{{pc}}</td>
                 </tr>
             {% endfor %}
         </table>
+    <button type="submit"><a href="{% url 'submit' category.pk %}"> Subscribe</a></button>
     {% else %}
         <p>No news</p>
     {% endif %}
@@ -58,4 +52,3 @@ News
        {% endif %}
    {% endif %}
 {% endblock content %}
-{% endcache %}

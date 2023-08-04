@@ -38,21 +38,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',  # контроль сессий
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'django.contrib.sites',
     'django.contrib.flatpages',
+
     'news.apps.NewsConfig',
     'django_filters',
     'bootstrapform',
     "debug_toolbar",
 
-    #  HELP!!!
+    #  allauth
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
 ]
 
+DEFAULT_FROM_EMAIL = ''
 SITE_ID = 1
 
 MIDDLEWARE = [
@@ -76,9 +77,10 @@ TEMPLATES = [
         'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
-            'context_processors': [  # what is it?
+            'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -157,13 +159,16 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+#  email
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
 EMAIL_HOST_USER = 'razumovskijigor6@gmail.com'  # !!!
 EMAIL_HOST_PASSWORD = 'odwcmdjkvuhngmkx'  # !!!
 EMAIL_USE_SSL = True
 EMAIL_USE_TLS = False
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+#  redis
 REDIS_HOST = '127.0.0.1'  # NOT 0.0.0.0 with docker
 REDIS_PORT = '6379'
 CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
@@ -178,12 +183,13 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # 'none'
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+
 
 ACCOUNT_FORMS = {'signup': 'news.models.BasicSignupForm'}
 
-
-#cache
+#  cache
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',

@@ -15,7 +15,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
            <div class="container">
                {% if request.user.is_authenticated %}
-               <div style="color:#ffffff">{{user.username}} <a href="{% url 'logout' %}">Log out</a></div>
+               <div style="color:#ffffff">{{user.username}} <a href="{% url 'logout' %}">Выйти</a></div>
                {% else %}
                     <a class="navbar-brand" href="{% url 'sign' %}">Регистрация</a>|<a class="navbar-brand" href="{% url 'login' %}">Вход</a>
                {% endif %}
@@ -29,7 +29,7 @@
                <div class="collapse navbar-collapse" id="navbarResponsive">
                    <ul class="navbar-nav ml-auto">
                        <li class="nav-item active">
-                           <a class="nav-link" href="#">Home
+                           <a class="nav-link" href="/">Статьи
                                <span class="sr-only">(current)</span>
                            </a>
                        </li>
