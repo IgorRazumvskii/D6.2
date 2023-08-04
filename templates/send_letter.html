@@ -1,0 +1,18 @@
+{% extends 'flatpages/default.html' %}
+
+{% load bootstrap %}
+
+
+{% block title %}
+Send letter
+{% endblock title %}
+
+{% block content %}
+    <h1>Send letter</h1>
+    <hr>
+    <form method="post">
+      {% csrf_token %}
+        {{form}}
+        <button type="submit">Send</button>
+    </form>
+{% endblock content %}

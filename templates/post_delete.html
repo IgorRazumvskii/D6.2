@@ -1,0 +1,22 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% load bootstrap %}
+
+{% load  custom_tags%}
+
+{% block title %}
+News
+{% endblock title %}
+
+
+{% block content %}
+   <form method="post">
+       {% csrf_token %}
+       <p>
+           Точно ли вы хотите удалить  новость: {{news.header}}?
+       </p>
+       <input type="submit" value="Да">
+   </form>
+{% endblock content %}
