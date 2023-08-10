@@ -51,6 +51,9 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+
+    # scheduler
+    'django_apscheduler',
 ]
 
 DEFAULT_FROM_EMAIL = ''
@@ -134,7 +137,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -196,3 +199,7 @@ CACHES = {
         'LOCATION': BASE_DIR / 'django_cache',
     }
 }
+
+# scheduler
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+APSCHEDULER_RUN_NOW_TIMEOUT = 25
