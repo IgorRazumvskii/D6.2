@@ -174,12 +174,14 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 #  redis
 REDIS_HOST = '127.0.0.1'  # NOT 0.0.0.0 with docker
 REDIS_PORT = '6379'
-CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
-CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
-CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
+
+#  celery
+CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'  # URL брокера сообщений
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}  #
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'  # хранилище результатов выполнения задач
+CELERY_ACCEPT_CONTENT = ['application/json']  # допустимый формат данных
+CELERY_TASK_SERIALIZER = 'json'  # метод сериализации задач
+CELERY_RESULT_SERIALIZER = 'json'  # метод сериализации результатов
 
 # registration with email
 ACCOUNT_EMAIL_REQUIRED = True

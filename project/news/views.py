@@ -1,9 +1,9 @@
 from .models import Post, User, BaseRegisterForm, Category
 from .filters import PostFilter
 from .forms import PostForm, LetterForm
-from news.tasks import send
+from news.tasks import *
 
-from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView, TemplateView
+from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView, TemplateView, View
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
@@ -14,6 +14,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import redirect, render
 from django.db.models.signals import post_save
 from django.core.mail import send_mail, EmailMessage, mail_managers
+from django.http import HttpResponse
 
 
 # Вывод новостей
