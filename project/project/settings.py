@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4q(u9x15t#(do3ysf-prd5^5cje332fqwjy94g734j4bne*o$1'
+SECRET_KEY = 'django-insecure-4q(u9x15t#(do3ysf-prd5^5cje332fqwjy94g734j4bne*o$1'  # {{secret_key}}
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -32,6 +32,8 @@ ALLOWED_HOSTS = ['127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'modeltranslation',  # обязательно перед админом
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -54,14 +56,21 @@ INSTALLED_APPS = [
 
     # scheduler
     'django_apscheduler',
+
+    'rest_framework',
 ]
 
 DEFAULT_FROM_EMAIL = ''
 SITE_ID = 1
 
+LANGUAGE_CODE = 'ru'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+
+    'django.middleware.locale.LocaleMiddleware',
+
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -70,6 +79,8 @@ MIDDLEWARE = [
 
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     "debug_toolbar.middleware.DebugToolbarMiddleware",
+
+    'news.middlewares.TimezoneMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -112,7 +123,21 @@ DATABASES = {
     }
 }
 
+'''
+for PostgreSQL
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',  # путь импорта специального модуля Django
+        'NAME': 'postgres',  # имя базы данных
+        'USER': 'postgres',  # имя пользователя БД
+        'PASSWORD': '',  # пароль пользователя БД
+        'HOST': 'localhost',  # сетевой адрес БД
+        'PORT': '5432',  # порт БД
+    },
+}
+
+'''
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -135,13 +160,18 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+#  LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Europe/Moscow'
 
-USE_I18N = True
+USE_I18N = True   # интернационализация будет поддерживаться
 
 USE_TZ = True
+
+#  для локализации
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale')
+]
 
 
 # Static files (CSS, JavaScript, Images)
@@ -205,3 +235,48 @@ CACHES = {
 # scheduler
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 APSCHEDULER_RUN_NOW_TIMEOUT = 25
+
+#  logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'style': '{',
+    'formatters': {
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        }
+    }
+}
+
+LANGUAGES = [
+    ('en', 'English'),
+    ('ru', 'Русский')
+]

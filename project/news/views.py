@@ -16,6 +16,27 @@ from django.db.models.signals import post_save
 from django.core.mail import send_mail, EmailMessage, mail_managers
 from django.http import HttpResponse
 
+from rest_framework.generics import ListAPIView
+from .serializers import PostSerializer
+
+from django.utils.translation import gettext as _
+from django.utils import timezone
+
+import pytz
+
+
+class PostListView(ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+
+class Index(View):
+
+    def get(self, request):
+        string = _('Hello world')
+
+        return HttpResponse(string)
+
 
 # Вывод новостей
 class PostList(ListView):
@@ -24,6 +45,23 @@ class PostList(ListView):
     template_name = 'news.html'
     context_object_name = 'news'
     # paginate_by = 2
+
+    def get(self, request):
+        # . Translators: This message appears on the home page only
+        curent_time = timezone.now()
+        news = Post.objects.all()
+
+        context = {
+            'news': news,
+            'current_time': timezone.now(),
+            'timezones': pytz.common_timezones  # добавляем в контекст все доступные часовые пояса
+        }
+
+        return HttpResponse(render(request, 'news.html', context))
+
+    def post(self, request):
+        request.session['django_timezone'] = request.POST['timezone']
+        return redirect('/')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -47,7 +85,7 @@ class CategoryList(ListView):
         return context
 
     def get_queryset(self):
-        return Post.objects.filter(category=self.kwargs['pk'])
+        return Post.objects.filter(category=self.kwargs['pk' ])
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
@@ -184,25 +222,13 @@ def log_out(request):
     return redirect('login')
 
 
-def send_letter(request):
-    html_mes = '<h1>Hi</h1>'
-    if request.method == "POST":
-        form = LetterForm(request.POST)
-        if form.is_valid():
-            send.delay()
-            return redirect('send_letter')
-    else:
-        form = LetterForm()
-    return render(request, 'send_letter.html', context={'form': form})
-
-
 @login_required
 def upgrade_me(request):
     user = request.user
     premium_group = Group.objects.get(name='authors')
     if not request.user.groups.filter(name='authors').exists():
         premium_group.user_set.add(user)
-    return redirect('/')
+    return redirect('post_list')
 
 
 def submit(request, pk):

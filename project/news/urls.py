@@ -20,8 +20,6 @@ urlpatterns = [
     path('news/create/', PostCreate.as_view(), name='post_create'),
     path('article/create', ArticleCreate.as_view(), name='article_create'),
 
-    path('send_letter/', send_letter, name='send_letter'),
-
     path('index/', IndexView.as_view(), name='index'),
     #  path('login/', log_in, name='login'),
     path('login/', LoginView.as_view(template_name='login.html'), name='login'),
@@ -33,5 +31,9 @@ urlpatterns = [
     path('upgrade/', upgrade_me, name='upgrade'),
 
     path('submit/<int:pk>', submit, name='submit'),
+
+    path('translate', Index.as_view(), name='translate'),
+
+    path('testframe/', PostListView.as_view(), name='testframe')
 
     ]
