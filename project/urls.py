@@ -23,4 +23,5 @@ urlpatterns = [
     path('', include('news.urls')),
     path('__debug__/', include('debug_toolbar.urls')),
     path('accounts/', include('allauth.urls')),
+    path('i18n/', include('django.conf.urls.i18n')),
 ]

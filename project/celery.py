@@ -24,7 +24,7 @@ app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
     'name': {
-        'task': 'news.tasks.second_send',
-        'schedule': crontab(minute='*/3')
+        'task': 'news.tasks.my_job',
+        'schedule': crontab(hour='8', minute='0', day_of_week='1')
     }
 }

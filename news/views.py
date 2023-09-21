@@ -1,9 +1,9 @@
 from .models import Post, User, BaseRegisterForm, Category
 from .filters import PostFilter
 from .forms import PostForm, LetterForm
-from news.tasks import send
+from news.tasks import *
 
-from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView, TemplateView
+from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView, TemplateView, View
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
@@ -14,6 +14,33 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import redirect, render
 from django.db.models.signals import post_save
 from django.core.mail import send_mail, EmailMessage, mail_managers
+from django.http import HttpResponse
+
+from rest_framework.generics import ListAPIView
+from .serializers import PostSerializer, CategorySerializer
+
+from django.utils.translation import gettext as _
+from django.utils import timezone
+
+import pytz
+
+
+class PostListView(ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+
+class CategoryListView(ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+class Index(View):
+
+    def get(self, request):
+        string = _('Hello world')
+
+        return HttpResponse(string)
 
 
 # Вывод новостей
@@ -46,7 +73,7 @@ class CategoryList(ListView):
         return context
 
     def get_queryset(self):
-        return Post.objects.filter(category=self.kwargs['pk'])
+        return Post.objects.filter(category=self.kwargs['pk' ])
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
@@ -183,25 +210,13 @@ def log_out(request):
     return redirect('login')
 
 
-def send_letter(request):
-    html_mes = '<h1>Hi</h1>'
-    if request.method == "POST":
-        form = LetterForm(request.POST)
-        if form.is_valid():
-            send.delay()
-            return redirect('send_letter')
-    else:
-        form = LetterForm()
-    return render(request, 'send_letter.html', context={'form': form})
-
-
 @login_required
 def upgrade_me(request):
     user = request.user
     premium_group = Group.objects.get(name='authors')
     if not request.user.groups.filter(name='authors').exists():
         premium_group.user_set.add(user)
-    return redirect('/')
+    return redirect('post_list')
 
 
 def submit(request, pk):

@@ -11,6 +11,8 @@ from django import forms
 
 from allauth.account.forms import SignupForm
 
+from django.utils import timezone
+
 from django.dispatch import receiver
 
 CHOICES = [
@@ -27,14 +29,26 @@ class Author(models.Model):
     def __str__(self):
         return self.user.username
 
+    #  ToDo: fix
     def update_rating(self):
-        rating_of_post_by_author = Post.objects.filter(author=self).aggregate(Sum('rate_of_post')).get('rate_of_post__sum')*3
-        print(rating_of_post_by_author)
-        rating_of_comments_by_author = Comment.objects.filter(user=self.user).aggregate(Sum('rate_of_comment')).get('rate_of_comment__sum', 0)
-        print(rating_of_comments_by_author)
-        rating_of_comment_by_post = Comment.objects.filter(post__in=Post.objects.filter(author=self)).aggregate(Sum('rate_of_comment')).get('rate_of_comment__sum', 0)
-        print(rating_of_comment_by_post)
-        #rating_of_comment_by_post = Comment.objects.filter(post=Post.objects.filter(author=self)).aggregate(Sum('rate_of_comment')).get('rate_of_comment__sum')
+        if len(Post.objects.filter(author=self)) > 0:
+            rating_of_post_by_author = Post.objects.filter(author=self).aggregate(Sum('rate_of_post')).get('rate_of_post__sum')*3
+        else:
+            rating_of_post_by_author = 0
+        #  print(rating_of_post_by_author)
+
+        if len(Comment.objects.filter(user=self.user)) > 0:
+            rating_of_comments_by_author = Comment.objects.filter(user=self.user).aggregate(Sum('rate_of_comment')).get('rate_of_comment__sum', 0)
+        else:
+            rating_of_comments_by_author = 0
+        #  print(rating_of_comments_by_author)
+
+        if len(Comment.objects.filter(post__in=Post.objects.filter(author=self))) > 0:
+            rating_of_comment_by_post = Comment.objects.filter(post__in=Post.objects.filter(author=self)).aggregate(Sum('rate_of_comment')).get('rate_of_comment__sum', 0)
+        else:
+            rating_of_comment_by_post = 0
+        #  print(rating_of_comment_by_post)
+        #  rating_of_comment_by_post = Comment.objects.filter(post=Post.objects.filter(author=self)).aggregate(Sum('rate_of_comment')).get('rate_of_comment__sum')
         self.rate = rating_of_post_by_author + rating_of_comments_by_author + rating_of_comment_by_post
         self.save()
 
@@ -49,7 +63,7 @@ class Category(models.Model):
 
 class Post(models.Model):
     article_or_news = models.CharField(max_length=2, choices=CHOICES)
-    date_and_time = models.DateTimeField(auto_now=True)
+    date_and_time = models.DateTimeField(default=timezone.now)
     header = models.CharField(max_length=255)
     text = models.TextField()
     rate_of_post = models.IntegerField(default=0)
@@ -115,7 +129,6 @@ class BaseRegisterForm(UserCreationForm):
                   "password2", )
 
 
-#  Help
 class BasicSignupForm(SignupForm):
 
     def save(self, request):
