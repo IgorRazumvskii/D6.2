@@ -1,0 +1,28 @@
+2023-11-20 19:24:36,139, WARNING, views, LOGGER RUN
+2023-11-20 19:24:36,139, ERROR, views, ERROR RUN
+Traceback (most recent call last):
+  File "/Users/vector/PycharmProjects/D6.2/project/news/views.py", line 69, in get
+    1/0
+    ~^~
+ZeroDivisionError: division by zero
+2023-11-20 19:31:04,096, WARNING, views, LOGGER RUN
+2023-11-20 19:31:04,097, ERROR, views, ERROR RUN
+Traceback (most recent call last):
+  File "/Users/vector/PycharmProjects/D6.2/project/news/views.py", line 69, in get
+    1/0
+    ~^~
+ZeroDivisionError: division by zero
+2023-11-20 19:31:58,553, WARNING, views, LOGGER RUN
+2023-11-20 19:31:58,554, ERROR, views, ERROR RUN
+Traceback (most recent call last):
+  File "/Users/vector/PycharmProjects/D6.2/project/news/views.py", line 69, in get
+    1/0
+    ~^~
+ZeroDivisionError: division by zero
+2023-11-20 19:32:06,582, WARNING, views, LOGGER RUN
+2023-11-20 19:32:06,582, ERROR, views, ERROR RUN
+Traceback (most recent call last):
+  File "/Users/vector/PycharmProjects/D6.2/project/news/views.py", line 69, in get
+    1/0
+    ~^~
+ZeroDivisionError: division by zero

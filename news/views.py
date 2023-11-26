@@ -17,22 +17,21 @@ from django.core.mail import send_mail, EmailMessage, mail_managers
 from django.http import HttpResponse
 
 from rest_framework.generics import ListAPIView
-from .serializers import PostSerializer, CategorySerializer
+from .serializers import PostSerializer
 
 from django.utils.translation import gettext as _
 from django.utils import timezone
 
 import pytz
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class PostListView(ListAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-
-
-class CategoryListView(ListAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
 
 
 class Index(View):
@@ -51,10 +50,36 @@ class PostList(ListView):
     context_object_name = 'news'
     # paginate_by = 2
 
+
+
+    def get(self, request):
+        # . Translators: This message appears on the home page only
+        curent_time = timezone.now()
+        news = Post.objects.all()
+
+        context = {
+            'news': news,
+            'current_time': timezone.now(),
+            'timezones': pytz.common_timezones  # добавляем в контекст все доступные часовые пояса
+        }
+
+        logger.warning('LOGGER RUN')
+
+        try:
+            1/0
+        except Exception:
+            logger.error('ERROR RUN', exc_info=True)
+
+        return HttpResponse(render(request, 'news.html', context))
+
+    def post(self, request):
+        request.session['django_timezone'] = request.POST['timezone']
+        return redirect('/')
+
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
-        return context #return
+        return context
 
     def get_queryset(self):
         return Post.objects.all().select_related('author')
@@ -73,7 +98,7 @@ class CategoryList(ListView):
         return context
 
     def get_queryset(self):
-        return Post.objects.filter(category=self.kwargs['pk' ])
+        return Post.objects.filter(category=self.kwargs['pk'])
 
 
 class IndexView(LoginRequiredMixin, TemplateView):

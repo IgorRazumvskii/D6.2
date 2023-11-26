@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import logging
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -195,7 +198,7 @@ INTERNAL_IPS = [
 #  email
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'razumovskijigor6@gmail.com'  # !!!
+EMAIL_HOST_USER = 'razumovskijigor6@gmail.com'  # !!! переменные окружения
 EMAIL_HOST_PASSWORD = 'odwcmdjkvuhngmkx'  # !!!
 EMAIL_USE_SSL = True
 EMAIL_USE_TLS = False
@@ -238,42 +241,146 @@ APSCHEDULER_RUN_NOW_TIMEOUT = 25
 
 #  logging
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'style': '{',
-    'formatters': {
-        'simple': {
-            'format': '%(levelname)s %(message)s'
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters":
+        {
+            "my_format":
+                {
+                    "format": "{asctime}, {levelname}, {message}",
+                    "style": "{"
+                },
+            "warning_format":
+                {
+                    "format": "{asctime}, {levelname}, {message}, {pathname}",
+                    "style": "{"
+                },
+            "info_format":
+                {
+                    "format": "{asctime}, {levelname}, {module}, {message}",
+                    "style": "{"
+                },
+            "error_format":
+                {
+                    "format": "{asctime}, {levelname}, {message}, {pathname}",
+                    "style": "{"
+                },
+            "security_format":
+                {
+                    "format": "{asctime}, {levelname}, {module},{message}",
+                    "style": "{"
+                },
+            "mail_format":
+                {
+                    "format": "{asctime}, {levelname}, {module}, {message}",
+                    "style": "{"
+                },
         },
-    },
-    'filters': {
-        'require_debug_true': {
-            '()': 'django.utils.log.RequireDebugTrue',
+
+    "handlers":
+        {
+            "debug_handler": {
+                "class": "logging.StreamHandler",
+                "formatter": "my_format"
+            },
+            "warning_handler":
+                {
+                    "level": "WARNING",
+                    "class": "logging.StreamHandler",
+                    "formatter": "warning_format"
+                },
+            "info_handler":
+                {
+                    "level": "INFO",
+                    "class": "logging.FileHandler",
+                    "filename": "logs/general.log",
+                    "formatter": "info_format"
+                },
+            "error_handler":
+                {
+                    "level": "ERROR",
+                    "class": "logging.FileHandler",
+                    "filename": "logs/errors.log",
+                    "formatter": "error_format"
+                },
+            "security_handler":
+                {
+                    "level": "ERROR",
+                    "class": "logging.FileHandler",
+                    "filename": "logs/security.log",
+                    "formatter": "security_format"
+                },
+            "mail_handler":
+                {
+                    "level": "ERROR",
+                    "class": "django.utils.log.AdminEmailHandler",
+                    "include_html": True,
+                    "formatter": "mail_format"
+                },
         },
-    },
-    'handlers': {
-        'console': {
-            'level': 'INFO',
-            'filters': ['require_debug_true'],
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple'
+
+    "filters":
+        {
+            "required":
+                {
+                    "()": "django.utils.log.RequireDebugTrue",
+                },
+            "un_required":
+                {
+                    "()": "django.utils.log.RequireDebugFalse",
+                }
         },
-        'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler'
-        }
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'propagate': True,
+
+    "loggers":
+        {
+            "news": {
+                "handlers": ["debug_handler", "warning_handler", "info_handler"],
+                "filters": ["required"],
+                "level": os.getenv("DJANGO_LOG_LEVEL", "DEBUG"),
+                "propagate": True,
+                },
+            "django":
+                {
+                    "filters": ["required"],
+                    "handlers": ["debug_handler", "warning_handler", "mail_handler"],
+                    "level": os.getenv("DJANGO_LOG_LEVEL", "ERROR"),
+                    "propagate": True,
+                },
+            "django.server":
+                {
+                    "filters": ["required"],
+                    "handlers": ["error_handler"],
+                    "level": os.getenv("DJANGO_LOG_LEVEL", "ERROR"),
+                    "propagate": True,
+                },
+            "django.template":
+                {
+                    "filters": ["required"],
+                    "handlers": ["error_handler"],
+                    "level": os.getenv("DJANGO_LOG_LEVEL", "ERROR"),
+                    "propagate": True,
+                },
+            "django.db.backends":
+                {
+                    "filters": ["required"],
+                    "handlers": ["error_handler"],
+                    "level": os.getenv("DJANGO_LOG_LEVEL", "ERROR"),
+                    "propagate": True,
+                },
+            "django.security":
+                {
+                    "filters": ["required"],
+                    "handlers": ["security_handler"],
+                    "propagate": True,
+                },
+            "django.request":
+                {
+                    "filters": ["un_required"],
+                    "handlers": ["mail_handler", "error_handler"],
+                    "level": os.getenv("DJANGO_LOG_LEVEL", "ERROR"),
+                    "propagate": True,
+                },
         },
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        }
-    }
 }
 
 LANGUAGES = [

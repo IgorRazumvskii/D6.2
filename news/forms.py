@@ -8,10 +8,12 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ['header',
-                  'text',
-                  'category',
-                  'author']
+        fields = [
+            'article_or_news',
+            'header',
+            'text',
+            'category',
+            'author']
 
     def clean(self):
         cleaned_data = super().clean()
